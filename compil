@@ -1,0 +1,58 @@
+#!/bin/bash
+
+
+if [ $# -ne 1 ]
+then
+   echo "Error(1): wrong args"
+   echo "Usage: compile <filename>.myc"
+   exit 1
+fi
+
+if [ ! -f $1 ]
+then
+    echo "Error(2): file does not exist or is ont a regular file"
+    echo "Usage: compile <filename>.myc"
+    exit 2
+fi
+
+if [[ ${1##*.} != "myc" ]]
+then
+    echo "Error(3): not a MyC file"
+    exit 3
+fi
+
+make > log 2> log
+
+if [ $? != 0 ]
+then
+    echo "Error(4): couldn't build correctly myc"
+    cat log
+    exit 4
+else
+    echo "Successfully created myc compiler"
+fi
+
+./myc < $1 
+
+if [ $? != 0 ]
+then
+    echo "Error(5): encountered a problem using  myc"
+    exit 5
+else
+    echo "Successfully compiled source file"
+fi
+
+echo "Successfully created sources"
+
+gcc test/test.h test/test.c -o test/test 2> log 
+
+if [ $? != 0 ]
+then
+    echo "Error(6): couldn't build correctly test"
+    cat log
+    exit 6
+else
+    echo "Successfully created executable file"
+fi
+
+
